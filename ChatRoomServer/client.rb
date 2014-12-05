@@ -18,3 +18,4 @@ puts "Enter sentence to send to server"
    puts line      			#display what server has returned
 }
 s.close                     # close socket
+

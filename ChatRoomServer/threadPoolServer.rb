@@ -52,6 +52,8 @@ if $0 == __FILE__
 port = 19999
   p = Pool.new(10)
   server = TCPServer.open(port)
+  chatRooms = Hash.new;
+
   
   loop{
       p.schedule(server.accept) do |client|
@@ -60,7 +62,12 @@ port = 19999
     read =client.gets
     text ="HELO text\n" 
     kill ="KILL_SERVICE\n"
+
+    sentences = Array.new
+    #puts "array of split sentences"
+    sentences =read.split(' ')
     
+    #JOIN_CHATROOM:lawlor CLIENT_IP:0 PORT:0 CLIENT_NAME:lawlipops
 if read ==kill
         modify = "Killing Server"
         client.puts modify
@@ -68,16 +75,42 @@ if read ==kill
         server.close
         end
 
+    if sentences[0].include? "JOIN_CHATROOM"
+        room = sentences[0]
+        puts "Joining chat room:"
+        room.slice! "JOIN_CHATROOM:"
+        puts room
+        
+
+    end
+
+    if sentences[1].include? "CLIENT_NAME"
+        nickname = sentences[1]
+        puts "user name: " 
+        puts nickname
+        nickname.slice! "CLIENT_NAME:"
+        if (chatRooms[room])
+          puts "names already in use"
+        else
+        chatRooms[room] = nickname,"Admin";
+        end
+        puts "contents of this chatroom"
+        puts "#{chatRooms['hola']} \n"
+    end
+
+
+
+
         #if read.include? "HELO"
    if read.include? "HELO"   #look for 
         modify = read <<"IP:#{remote_ip} Port : #{port} Student ID : 11368226 "
       # finalMessage =[read,modify].join(' ')
         client.puts modify
-   else
-        modify="not a valid command "
-        client.puts modify
-    end
-    
+  else
+       modify="not a valid command"
+       client.puts modify
+   
+  end 
  #client.close                # Disconnect from the client
 }
 
